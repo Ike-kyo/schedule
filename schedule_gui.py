@@ -54,7 +54,8 @@ except Exception as e:
 
 # --- Worker ---
 class ScheduleWorker(QThread):
-    finished = pyqtSignal(str, int, int, int, int)
+    # --- 変更: 7個対応 ---
+    finished = pyqtSignal(str, int, int, int, int, int, int)
     error = pyqtSignal(str)
 
     def __init__(self, year, month, day, filter_type, import_file, output_path):
@@ -68,13 +69,14 @@ class ScheduleWorker(QThread):
 
     def run(self):
         try:
-            save_file, gifu_new, shiga_new, gifu_old, shiga_old = create_schedule(
+            # --- 変更: create_schedule 7個戻り値対応 ---
+            save_file, gifu_new, shiga_new, gifu_old, shiga_old, shiga_spec, total_sum = create_schedule(
                 self.year, self.month, self.day,
                 self.filter_type,
                 self.import_file,
                 self.output_path
             )
-            self.finished.emit(save_file, gifu_new, shiga_new, gifu_old, shiga_old)
+            self.finished.emit(save_file, gifu_new, shiga_new, gifu_old, shiga_old, shiga_spec, total_sum)
         except Exception as e:
             self.error.emit(str(e))
 
@@ -288,17 +290,18 @@ class CuteScheduleApp(QWidget):
         self.worker.error.connect(self.on_error)
         self.worker.start()
 
-    def on_finished(self, save_file, gifu_new, shiga_new, gifu_old, shiga_old):
+    # --- 変更: 7個対応、滋賀規格表示追加 ---
+    def on_finished(self, save_file, gifu_new, shiga_new, gifu_old, shiga_old, shiga_spec, total_sum):
         if self.progress_dialog:
             self.progress_dialog.close()
             self.progress_dialog = None
-        total = gifu_new + shiga_new + gifu_old + shiga_old
         QMessageBox.information(
             self, "完了",
             f"保存完了: {save_file}\n"
             f"岐阜新: {gifu_new}, 滋賀新: {shiga_new},\n"
-            f"岐阜旧: {gifu_old}, 滋賀旧: {shiga_old}\n"
-            f"Totalは {total}台です"
+            f"岐阜旧: {gifu_old}, 滋賀旧: {shiga_old},\n"
+            f"滋賀規格: {shiga_spec}\n"
+            f"Totalは {total_sum}台です"
         )
 
     def on_error(self, msg):

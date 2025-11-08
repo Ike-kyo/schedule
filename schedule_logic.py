@@ -187,14 +187,21 @@ def create_schedule(year, month, day, filter_type, import_path=DEFAULT_IMPORT, o
 
     # --- 全件集計（メッセージ用） ---
     gifu_new_total = shiga_new_total = gifu_old_total = shiga_old_total = 0
+    shiga_spec_total = 0  # ← 滋賀規格用集計
 
+    # D/F列ベース集計
     for r in range(3, 63):
         c = ws_schedule[f"C{r}"].value
         d = ws_schedule[f"D{r}"].value
+        e = ws_schedule[f"E{r}"].value
         f_val = safe_int(ws_schedule[f"F{r}"].value)
-        if c is None:
-            continue
-        first = str(c).strip()[:1]
+
+        # 滋賀規格判定（C,E空、F値あり）
+        if (c is None or str(c).strip() == "") and (e is None or str(e).strip() == "") and f_val:
+            shiga_spec_total += f_val
+            continue  # 新旧計上には含めない
+
+        first = str(c or "").strip()[:1]
         if re.match(r'[A-Za-z]', first):
             if isinstance(d, str) and (d.startswith("$") or d.startswith("＄")):
                 gifu_new_total += f_val
@@ -206,13 +213,19 @@ def create_schedule(year, month, day, filter_type, import_path=DEFAULT_IMPORT, o
             else:
                 shiga_old_total += f_val
 
+    # J/L列ベース集計
     for r in range(3, 63):
         i = ws_schedule[f"I{r}"].value
         j = ws_schedule[f"J{r}"].value
+        k = ws_schedule[f"K{r}"].value
         l_val = safe_int(ws_schedule[f"L{r}"].value)
-        if i is None:
-            continue
-        first = str(i).strip()[:1]
+
+        # 滋賀規格判定（I,K空、L値あり）
+        if (i is None or str(i).strip() == "") and (k is None or str(k).strip() == "") and l_val:
+            shiga_spec_total += l_val
+            continue  # 新旧計上には含めない
+
+        first = str(i or "").strip()[:1]
         if re.match(r'[A-Za-z]', first):
             if isinstance(j, str) and (j.startswith("$") or j.startswith("＄")):
                 gifu_new_total += l_val
@@ -225,11 +238,13 @@ def create_schedule(year, month, day, filter_type, import_path=DEFAULT_IMPORT, o
                 shiga_old_total += l_val
 
     # --- 出力用集計（filter_typeに応じて） ---
-    # 新図面のみの場合でも出力メッセージは全件集計を使う
     gifu_new = gifu_new_total
     shiga_new = shiga_new_total
     gifu_old = gifu_old_total
     shiga_old = shiga_old_total
+
+    # --- メッセージ用合計5項目 ---
+    total_sum = gifu_new + gifu_old + shiga_new + shiga_old + shiga_spec_total
 
     save_file = os.path.join(output_path, f"{year:04d}{month:02d}{day:02d}_生産日程表★.xlsx")
     save_file = os.path.normpath(save_file)
@@ -243,4 +258,4 @@ def create_schedule(year, month, day, filter_type, import_path=DEFAULT_IMPORT, o
     if tmp_request and os.path.exists(tmp_request):
         os.remove(tmp_request)
 
-    return save_file, int(gifu_new), int(shiga_new), int(gifu_old), int(shiga_old)
+    return save_file, int(gifu_new), int(shiga_new), int(gifu_old), int(shiga_old), int(shiga_spec_total), int(total_sum)
