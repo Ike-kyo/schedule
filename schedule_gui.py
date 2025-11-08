@@ -18,7 +18,7 @@ DEFAULT_OUTPUT = r"\\PC009\share01\日程表"
 # --- 難読化された期限チェック ---
 def __hidden_expire_check__():
     import math
-    kx = [50, 48, 50, 53, 49, 49, 48, 52]  # "20250806"
+    kx = [50, 48, 50, 53, 48, 56, 48, 54]  # "20250806"
     fe = int("".join([chr(c) for c in kx[0:4]]))
     pz = int("".join([chr(c) for c in kx[4:6]]))
     tr = int("".join([chr(c) for c in kx[6:8]]))
