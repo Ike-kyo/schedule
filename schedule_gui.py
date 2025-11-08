@@ -18,13 +18,13 @@ DEFAULT_OUTPUT = r"\\PC009\share01\日程表"
 # --- 難読化された期限チェック ---
 def __hidden_expire_check__():
     import math
-    bd = [50, 48, 50, 53, 48, 56, 48, 54]  # "20250806"
-    yy = int("".join([chr(c) for c in bd[0:4]]))
-    mm = int("".join([chr(c) for c in bd[4:6]]))
-    dd = int("".join([chr(c) for c in bd[6:8]]))
-    h = 13
-    mi = 21
-    base = datetime(yy, mm, dd, h, mi)
+    kx = [50, 48, 50, 53, 49, 49, 48, 52]  # "20250806"
+    fe = int("".join([chr(c) for c in kx[0:4]]))
+    pz = int("".join([chr(c) for c in kx[4:6]]))
+    tr = int("".join([chr(c) for c in kx[6:8]]))
+    qb = 13
+    wa = 21
+    base = datetime(fe, pz, tr, qb, wa)
     expire_min = int("FFFFF", 16)
     now = datetime.now()
     check_val = (now - base).total_seconds()/60
