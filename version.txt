@@ -1,0 +1,29 @@
+# UTF-8
+VSVersionInfo(
+  ffi=FixedFileInfo(
+    filevers=(0, 8, 7, 1),
+    prodvers=(0, 8, 7, 1),
+    mask=0x3f,
+    flags=0x0,
+    OS=0x4,
+    fileType=0x1,
+    subtype=0x0,
+    date=(0, 0)
+    ),
+  kids=[
+    StringFileInfo(
+      [
+      StringTable(
+        '040904B0',
+        [StringStruct('CompanyName', '株式会社ヤスモク'),
+         StringStruct('FileDescription', '日程表を作るアプリ'),
+         StringStruct('FileVersion', '0.8.7.1'),
+         StringStruct('InternalName', '日程表つくるちゃん.exe'),
+         StringStruct('LegalCopyright', 'Copyright (C) 2025 株式会社ヤスモク'),
+         StringStruct('OriginalFilename', '日程表つくるちゃん.exe'),
+         StringStruct('ProductName', '日程表つくるちゃん'),
+         StringStruct('ProductVersion', '0.8.7.1')])
+      ]),
+    VarFileInfo([VarStruct('Translation', [1033, 1200])])
+  ]
+)
